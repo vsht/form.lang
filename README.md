@@ -82,6 +82,16 @@ The output should be
 
 The files `formext.lang` and `vlad-dark.xml` show how one can customize the highlighting even further by defining a custom style file. The file `formext.lang` should be copied to `~/.local/share/gtksourceview-3.0/language-specs` just like the regular `form.lang` (the two can be installed simultaneously), while the file `vlad-dark.xml` should go into `~/.local/share/gtksourceview-3.0/styles/`
 
+## Screenshots 
+
+Syntax highlighting with `form.lang`
+
+![Alt text](example1.jpg?raw=true)
+
+Syntax highlighting with `formext.lang` and `vlad-dark.xml`
+
+![Alt text](example2.jpg?raw=true)
+
 ## Useful links
 
 For more information regarding FORM see
