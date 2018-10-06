@@ -1,0 +1,1143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+      This file (form.lang) defines the FORM language for GtkSourceView.
+
+      Author: Vladyslav Shtabovenko <dev.vsht@posteo.de>
+      Copyright (C) 2018 Vladyslav Shtabovenko <dev.vsht@posteo.de>
+
+      form.lang is covered by the GNU General Public License 3.
+
+      form.lang is free software: you can redistribute it and/or modify it
+      under the terms of the GNU General Public License as published by the
+      Free Software Foundation, either version 3 of the License,
+      or (at your option) any later version.
+
+      form.lang is distributed in the hope that it will be useful, but
+      WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+      or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
+      more details.
+
+      You should have received a copy of the GNU General Public License along
+      with form.lang. If not, see http://www.gnu.org/licenses/.
+
+
+      FORM is a language for symbolic manipulations developed by
+      Jos Vermaseren of Nikhef, the Dutch National Institute for
+      Subatomic Physic. FORM is widely used in the theoretical high
+      energy physics to automatize complicated Quantum Field Theory (QFT)
+      calculations, in particular the evaluation of Feynman diagrams.
+
+      For more information regarding FORM see
+        https://www.nikhef.nl/~form/
+        https://github.com/vermaseren/form
+        https://en.wikipedia.org/wiki/FORM_(symbolic_manipulation_system)
+
+      Here are links to some useful material that I extensively used while
+      creating form.lang:
+
+        https://developer.gnome.org/gtksourceview/stable/lang-reference.html
+        https://wiki.gnome.org/Projects/GtkSourceView/StyleSchemes
+        https://github.com/niklongstone/regular-expression-cheat-sheet
+
+ -->
+<language id="form" _name="FORM" version="2.0" _section="Scientific">
+  <metadata>
+    <property name="mimetypes">text/x-form</property>
+    <property name="globs">*.frm;*.prc;*.h;*.hh</property>
+    <property name="line-comment-start">*</property>
+  </metadata>
+
+
+  <styles>
+    <style id="st-escaped-character"              _name="Escaped Character"               map-to="def:special-char"/>
+    <style id="st-separator-comment"              _name="Separator line"                  map-to="def:doc-comment-element"/>
+    <style id="st-fold-comment"                   _name="Fold"                            map-to="def:doc-comment-element"/>
+    <style id="st-magic-comment"                  _name="Magic comment"                   map-to="def:doc-comment-element"/>
+    <style id="st-line-comment"                   _name="Comment"                         map-to="def:comment"/>
+    <style id="st-boolean"                        _name="Boolean operator"                map-to="def:boolean"/>
+    <style id="st-operator"                       _name="Operator"                        map-to="def:operator"/>
+    <style id="st-numeric"                        _name="Number"                          map-to="def:decimal"/>
+    <style id="st-dollar-variable"                _name="Dollar variable"                 map-to="def:special-constant"/>
+    <style id="st-builtin-preprocessor-variable"  _name="Built in preprocessor variable"  map-to="def:constant"/>
+    <style id="st-preprocessor-variable"          _name="Preprocessor variable"           map-to="def:constant"/>
+    <style id="st-string"                         _name="String"                          map-to="def:string"/>
+    <style id="st-set"                            _name="Built in set"                    map-to="def:type"/>
+    <style id="st-preprocessor-statement"         _name="Preprocessor statement"          map-to="def:preprocessor"/>
+    <style id="st-preprocessor-setup-parameter"   _name="Setup parameter"                 map-to="def:preprocessor"/>
+    <style id="st-function-tensor"                _name="Tensor function"                 map-to="def:function"/>
+    <style id="st-function-reserved"              _name="Reserved function"               map-to="def:function"/>
+    <style id="st-function-regular"               _name="Regular function"                map-to="def:function"/>
+    <style id="st-module"                         _name="Module instruction"              map-to="def:identifier"/>
+    <style id="st-statement-declaration"          _name="Declaration statement"           map-to="def:type"/>
+    <style id="st-statement-specification"        _name="Specification statement"         map-to="def:statement"/>
+    <style id="st-statement-control"              _name="Control statement"               map-to="def:statement"/>
+    <style id="st-statement-executable"           _name="Executable statement"            map-to="def:statement"/>
+    <style id="st-statement-option"               _name="Statement option"                map-to="def:statement"/>
+  </styles>
+
+
+  <definitions>
+
+      <!--
+            In many codes it is common to use separators like ***** or *===== etc.
+      -->
+      <context id="separator-comment" style-ref="st-separator-comment">
+        <match>(^\*{2,}\s*$|^\*\-{2,}\s*$|^\*\_{2,}\s*$|^\*\={2,}\s*$)</match>
+      </context>
+
+
+      <!--
+            The folds, cf. Section 3.34 (#include) of the FORM manual
+      -->
+      <context id="fold-comment" style-ref="st-fold-comment">
+        <match>^\*\-\-\#[\[;\]].*$</match>
+      </context>
+
+
+      <!--
+            There are actually no intrinsic magic comment words in FORM, but a TODO is
+            quite convenient for many purposes.
+      -->
+      <context id="magic-comment" style-ref="st-magic-comment">
+        <keyword>TODO</keyword>
+      </context>
+
+
+      <!--
+            Comments that start with an asterisk (except for the folds).
+            Asterisk is the default commentary charcter in FORM, cf.
+            Chapter 17 of the FORM manual. AFAIK there are no other
+            popular choices that are used in practice
+      -->
+      <context id="line-comment" style-ref="st-line-comment" end-at-line-end="true" class="comment">
+        <start>(^\*)</start>
+        <include>
+          <context ref="def:in-comment"/>
+          <context ref="magic-comment"/>
+        </include>
+      </context>
+
+
+      <!--
+            Boolean operators, cf. Section 3.31 (#if) of the FORM manual.
+            This covers >=, <=, !=, &&, ||, ==, < and >
+      -->
+      <context id="boolean" style-ref="st-boolean" extend-parent="false">
+        <match extended="true">
+          (
+            &lt;\=          |
+            &gt;\=          |
+            \!\=            |
+            \=\=            |
+            \s&amp;&amp;\s  |
+            \s\|\|\s        |
+            [&lt;&gt;]
+          )
+        </match>
+      </context>
+
+
+      <!--
+            This covers ->, :, =, +, -, *, ^, %, |, &, !, ? and different variations of the triple dot opreator
+      -->
+      <context id="operator" style-ref="st-operator">
+        <match extended="true">
+          (
+            [\+\-]\.\.\.[\+\-]          |
+            \*\.\.\.\*                  |
+            \/\.\.\.\/                  |
+            \,\.\.\.\,                  |
+            \:\.\.\.\:                  |
+            \-&gt;                      |
+            [\:\=\+\-\*\/^\%\|&amp;\!\?]
+          )
+        </match>
+      </context>
+
+
+      <!--
+            Integers and floats
+      -->
+      <context id="numeric" style-ref="st-numeric">
+        <match extended="true">
+          (\b([0-9]*\.?[0-9]+)\b)
+        </match>
+      </context>
+
+
+      <!--
+            Dollar variables, cf. Chapter 6 of the FORM manual
+      -->
+      <context id="dollar-variable" style-ref="st-dollar-variable" class="no-spell-check">
+        <match extended="true">
+          (\$[_a-zA-Z][_a-zA-Z0-9]*)
+        </match>
+      </context>
+
+
+      <!--
+            User-defined preprocessor variables, cf. Chapter 3.1 of the FORM manual
+      -->
+      <context id="preprocessor-variable" style-ref="st-preprocessor-variable" class="string no-spell-check">
+        <start>`</start>
+        <end>'</end>
+        <include>
+          <!--
+                Built in preprocessor variables, cf. Chapter 3.1 of the FORM manual
+          -->
+          <context style-ref="st-builtin-preprocessor-variable">
+            <match extended="true" case-sensitive="false">
+              (
+                activeexprnames     |
+                cmodule             |
+                date                |
+                extrasymbols        |
+                numactiveexprs      |
+                oldnumextrasymbols  |
+                optimmaxvar         |
+                optimminvar         |
+                optimscheme         |
+                optimvalue          |
+                pid                 |
+                random              |
+                showiput            |
+                stopwatch           |
+                subversion          |
+                time                |
+                timer               |
+                tolower             |
+                toupper             |
+                version
+              )\_
+            </match>
+          </context>
+        </include>
+      </context>
+
+
+      <!--
+            Strings
+      -->
+      <context id="string" style-ref="st-string" end-at-line-end="true" class="string no-spell-check">
+        <start>"</start>
+        <end>"</end>
+        <include>
+          <context ref="preprocessor-variable"/>
+          <context id="escaped-character" style-ref="st-escaped-character">
+            <match extended="true">\\([\\\"\'nrbtf])</match>
+          </context>
+        </include>
+      </context>
+
+
+      <!--
+            The built in sets, cf. Chapter 2.6 of the FORM manual.
+            Here for convenience we also include explicit dummy indices
+            of the type Nxyz
+      -->
+      <context id="set" style-ref="st-set" class="no-spell-check">
+        <match extended="true" case-sensitive="false">
+          (
+            pos           |
+            pos0          |
+            neg           |
+            neg0          |
+            even          |
+            odd           |
+            int           |
+            symbol        |
+            fixed         |
+            index         |
+            number        |
+            dummyindices  |
+            vector        |
+            N[0-9]+
+          )\_
+        </match>
+      </context>
+
+
+<!--
+====================================================================================================
+=========================================== PREPROCESSOR ===========================================
+====================================================================================================
+-->
+
+
+      <!--
+            The setup parameters, cf. Chapter 17 of the FORM manual.
+      -->
+      <context id="preprocessor-setup-parameter" style-ref="st-preprocessor-setup-parameter" class="no-spell-check">
+        <match extended="true" case-sensitive="false">
+          (^\s*\#:\s+)\%[(
+              bracketindexsize        |
+              commentchar             |
+              compresssize            |
+              constindex              |
+              continuationlines       |
+              define                  |
+              dotchar                 |
+              factorizationcache      |
+              filepatches             |
+              functionlevels          |
+              hidesize                |
+              incdir                  |
+              indentspace             |
+              insidefirst             |
+              largepatches            |
+              largesize               |
+              maxnumbersize           |
+              maxtermsize             |
+              maxwildcards            |
+              nospacesinnumbers       |
+              numstorecaches          |
+              nwritefinalstatistics   |
+              nwriteprocessstatistics |
+              nwritestatistics        |
+              nwritethreadstatistics  |
+              oldfactarg              |
+              oldgcd                  |
+              oldorder                |
+              oldparallelstatistics   |
+              parentheses             |
+              path                    |
+              procedureextension      |
+              processbucketsize       |
+              resettimeonclear        |
+              scratchsize             |
+              shmwinsize              |
+              sizestorecache          |
+              smallextension          |
+              smallsize               |
+              sortiosize              |
+              sorttype                |
+              spectatorsize           |
+              subfilepatches          |
+              sublargepatches         |
+              sublargesize            |
+              subsmallextension       |
+              subsmallsize            |
+              subsortiosize           |
+              subtermsinsmall         |
+              tempdir                 |
+              tempsortdir             |
+              termsinsmall            |
+              threadbucketsize        |
+              threadloadbalancing     |
+              threads                 |
+              threadscratchoutsize    |
+              threadscratchsize       |
+              threadsortfilesynch     |
+              totalsize               |
+              workspace               |
+              wtimestats
+          )\%]
+        </match>
+      </context>
+
+
+      <!--
+            The preprocessor statements, cf. Chapter 3 of the FORM manual.
+      -->
+      <context id="preprocessor-statement" style-ref="st-preprocessor-statement" class="no-spell-check">
+        <match extended="true" case-sensitive="false">
+          (^\s*\#)\%[(
+              add                 |
+              addseparator        |
+              append              |
+              appendpath          |
+              assign              |
+              break               |
+              breakdo             |
+              call                |
+              case                |
+              clearoptimize       |
+              close               |
+              closedictionary     |
+              commentchar         |
+              create              |
+              debug               |
+              default             |
+              define              |
+              do                  |
+              else                |
+              elseif              |
+              enddo               |
+              endif               |
+              endinside           |
+              endprocedure        |
+              endswitch           |
+              exchange            |
+              external            |
+              factdollar          |
+              fromexternal        |
+              if                  |
+              ifdef               |
+              ifndef              |
+              include             |
+              inside              |
+              message             |
+              opendictionary      |
+              optimize            |
+              pipe                |
+              preout              |
+              prependpath         |
+              printtimes          |
+              procedure           |
+              procedureextension  |
+              prompt              |
+              redefine            |
+              remove              |
+              reset               |
+              reverseinclude      |
+              rmexternal          |
+              rmseparator         |
+              setexternal         |
+              setexternalattr     |
+              setrandom           |
+              show                |
+              skipextrasymbols    |
+              switch              |
+              system              |
+              terminate           |
+              toexternal          |
+              undefine            |
+              usedictionary       |
+              write
+          )\%]
+        </match>
+      </context>
+
+
+<!--
+====================================================================================================
+=========================================== MODULES ================================================
+====================================================================================================
+-->
+
+
+      <!--
+            Modules: cf. Chapter 4 of the FORM Manual
+      -->
+      <context id="module" style-ref="st-module" end-at-line-end="true" class="no-spell-check">
+        <start extended="true">(^\s*\.)</start>
+          <include>
+            <context ref="numeric"/>
+            <context ref="string"/>
+            <context>
+              <match extended="true" case-sensitive="false">
+                \%[(
+                    clear   |
+                    global  |
+                    end     |
+                    sort    |
+                    store
+                )\%]
+              </match>
+            </context>
+          </include>
+      </context>
+
+
+<!--
+====================================================================================================
+======================================== FUNCTIONS ================================================
+====================================================================================================
+-->
+
+
+      <!--
+            The tensor functions: cf. Chapter 8 of the FORM manual
+      -->
+      <context id="function-tensor" style-ref="st-function-tensor" class="no-spell-check">
+        <match extended="true" case-sensitive="false">
+          (
+            d         |
+            dd        |
+            dummyten  |
+            e         |
+            g         |
+            gi        |
+            g5        |
+            g6        |
+            g7
+          )\_
+        </match>
+      </context>
+
+
+      <!--
+            The reserved functions: cf. Chapter 8 of the FORM manual
+      -->
+      <context id="function-reserved" style-ref="st-function-reserved" class="no-spell-check">
+        <match extended="true" case-sensitive="false">
+          (
+            acos  |
+            acosh |
+            asin  |
+            asinh |
+            atan  |
+            atan2 |
+            atanh |
+            cos   |
+            cosh  |
+            li2   |
+            lin   |
+            ln    |
+            sin   |
+            sinh  |
+            sqrt  |
+            tan   |
+            tanh
+          )\_
+        </match>
+      </context>
+
+
+      <!--
+            The regular functions: cf. Chapter 8 of the FORM manual
+      -->
+      <context id="function-regular" style-ref="st-function-regular" class="no-spell-check">
+        <match extended="true" case-sensitive="false">
+          (
+            abs             |
+            bernoulli       |
+            binom           |
+            conjg           |
+            content         |
+            count           |
+            delta           |
+            deltap          |
+            denom           |
+            distrib         |
+            div             |
+            dum             |
+            dummy           |
+            exp             |
+            exteuclidean    |
+            extrasymbol     |
+            fac             |
+            factorin        |
+            farg            |
+            firstbracket    |
+            firstterm       |
+            gcd             |
+            id              |
+            integer         |
+            inverse         |
+            invfac          |
+            makerational    |
+            match           |
+            max             |
+            maxpowerof      |
+            min             |
+            minpowerof      |
+            mod             |
+            mod2            |
+            mul             |
+            nargs           |
+            nterms          |
+            numfactors      |
+            partitions      |
+            pattern         |
+            perm            |
+            prime           |
+            putfirst        |
+            random          |
+            ranperm         |
+            rem             |
+            replace         |
+            reverse         |
+            root            |
+            setfun          |
+            sig             |
+            sign            |
+            sum             |
+            sump            |
+            table           |
+            tbl             |
+            term            |
+            termsin         |
+            termsinbracket  |
+            theta           |
+            thetap
+          )\_
+        </match>
+      </context>
+
+
+<!--
+====================================================================================================
+======================================== STATEMENTS ================================================
+====================================================================================================
+-->
+
+
+      <!--
+            Declaration and definition statements, cf. Chapter 7 of the FORM manual.
+            Some common (longer) shortcuts like cfunction instead of cfunctions are also included.
+            Further shortcuts can be added upon request.
+      -->
+      <context id="statement-declaration" style-ref="st-statement-declaration" class="no-spell-check">
+        <match extended="true" case-sensitive="false">
+          (^\s*)\%[(
+            auto              |
+            autodeclare       |
+            cfunction         |
+            cfunctions        |
+            cleartable        |
+            commuteinset      |
+            commuting         |
+            comp              |
+            compress          |
+            copyspectator     |
+            createspectator   |
+            ctable            |
+            ctensor           |
+            ctensors          |
+            deallocatetable   |
+            dim               |
+            dimension         |
+            extrasymbol       |
+            fill              |
+            fillexpression    |
+            fixindex          |
+            function          |
+            functions         |
+            funpowers         |
+            gfactorized       |
+            global            |
+            globalfactorized  |
+            indexes           |
+            indices           |
+            insidefirst       |
+            lfactorized       |
+            loa               |
+            load              |
+            local             |
+            localfactorized   |
+            metric            |
+            modulus           |
+            nfunction         |
+            nfunctions        |
+            ntable            |
+            ntensor           |
+            ntensors          |
+            off               |
+            on                |
+            polyfun           |
+            polyratfun        |
+            processbucketsize |
+            propercount       |
+            save              |
+            set               |
+            symbol            |
+            symbols           |
+            table             |
+            tablebase         |
+            tensor            |
+            tensors           |
+            threadbucketsize  |
+            unittrace         |
+            vector            |
+            vectors
+          )\%]
+        </match>
+      </context>
+
+
+        <!--
+              Some statements can be abbreviated to just one or two characters.
+              Since here it is impossible to distinguish such abbreviations from
+              user-defined variables, we adopt the following rule: If the corresponding
+              word is no more than 3 spaces away from the beginning of the line, we
+              interpret it as an abbreviated  statement. Otherwise it will
+              be treated as a user-defined variable.
+
+              The current shortcuts are for symbol, vector, index, nfunction, cfunction,
+              commuting, tensor, ntensor, ctensor, local, global, dimension, unittrace,
+              save and fixindex.
+        -->
+       <context id="statement-declaration-short" style-ref="st-statement-declaration" class="no-spell-check">
+        <match extended="true" case-sensitive="false">
+          (^\s{0,3})\%[(
+            s                 |
+            v                 |
+            i                 |
+            f                 |
+            nf                |
+            cf                |
+            co                |
+            t                 |
+            nt                |
+            ct                |
+            l                 |
+            g                 |
+            d                 |
+            u                 |
+            sa                |
+            fi
+          )\%]\s+
+        </match>
+      </context>
+
+
+       <!--
+            This is an ugly hack for the auto and autodeclare statements. Unfortunately,
+            this positive look-behind is quite expensive, so that we cannot allow an arbitrary
+             number of spaces auto or autodeclare and the variable type.
+      -->
+      <define-regex id="statement-declaration-special-regex" extended="true" case-sensitive="false">
+        \%[(s|v|i|f|nf|cf|co|t|nt|ct|symbol|vector|index|
+              indices|function|function|nfunction|nfunctions|cfunction|cfunctions|commuting|tensor|
+              tensors|ntensor|ntensors|ctensor|ctensors)\%]
+      </define-regex>
+
+      <context id="statement-declaration-special" style-ref="st-statement-declaration" class="no-spell-check">
+        <match extended="true" case-sensitive="false">
+          (
+            ((?&lt;=(\b(auto)\b\s))\%{statement-declaration-special-regex})     |
+            ((?&lt;=(\b(auto)\b\s{2}))\%{statement-declaration-special-regex})  |
+            ((?&lt;=(\b(auto)\b\s{3}))\%{statement-declaration-special-regex})  |
+            ((?&lt;=(\b(auto)\b\s{4}))\%{statement-declaration-special-regex})  |
+            ((?&lt;=(\b(autodeclare)\b\s))\%{statement-declaration-special-regex})     |
+            ((?&lt;=(\b(autodeclare)\b\s{2}))\%{statement-declaration-special-regex})  |
+            ((?&lt;=(\b(autodeclare)\b\s{3}))\%{statement-declaration-special-regex})  |
+            ((?&lt;=(\b(autodeclare)\b\s{4}))\%{statement-declaration-special-regex})
+          )
+        </match>
+      </context>
+
+
+      <!--
+            Specification statements: cf. Chapter 8 of the FORM manual.
+      -->
+      <context id="statement-specification" style-ref="st-statement-specification" class="no-spell-check">
+        <match extended="true" case-sensitive="false">
+          (^\s*)\%[(
+            collect       |
+            delete        |
+            drop          |
+            hide          |
+            inparallel    |
+            intohide      |
+            keep          |
+            ndrop         |
+            nhide         |
+            notinparallel |
+            nskip         |
+            nunhide       |
+            pophide       |
+            pushhide      |
+            skip          |
+            unhide
+          )\%]
+        </match>
+      </context>
+
+
+      <!--
+            Control statements: cf. Chapter 8 of the FORM manual.
+      -->
+      <context id="statement-control" style-ref="st-statement-control" class="no-spell-check">
+        <match extended="true" case-sensitive="false">
+          (^\s*)\%[(
+              abracket      |
+              abrackets     |
+              antibracket   |
+              antiabrackets |
+              antib         |
+              bracket       |
+              brackets      |
+              factorize     |
+              format        |
+              moduleoption  |
+              nfactorize    |
+              nprint        |
+              nunfactorize  |
+              print         |
+              print\[\]     |
+              printtable    |
+              unfactorize
+          )\%]
+        </match>
+      </context>
+
+
+      <!--
+            Some statements can be abbreviated to just one or two characters.
+            Since here it is impossible to distinguish such abbreviations from
+            user-defined variables, we adopt the following rule: If the corresponding
+            word is no more than 3 spaces away from the beginning of the line, we
+            interpret it as an abbreviated  statement. Otherwise it will
+            be treated as a user-defined variable.
+
+            The current shortcuts are for antibrackets, brackets, format and nprint.
+      -->
+      <context id="statement-control-short" style-ref="st-statement-control" class="no-spell-check">
+        <match extended="true" case-sensitive="false">
+          (^\s{0,3})\%[(
+            a   |
+            ab  |
+            b   |
+            fo  |
+            np
+          )\%]
+        </match>
+      </context>
+
+
+      <!--
+            Executable statements: cf. Chapter 8 of the FORM manual.
+      -->
+      <context id="statement-executable" style-ref="st-statement-executable" class="no-spell-check">
+        <match extended="true" case-sensitive="false">
+          (^\s*)\%[(
+            also              |
+            antiputinside     |
+            antisymm          |
+            antisymmetrize    |
+            apply             |
+            aputinside        |
+            argexplode        |
+            argimplode        |
+            argtoextrasymbol  |
+            argument          |
+            assign            |
+            chainin           |
+            chainout          |
+            chisholm          |
+            contract          |
+            cyclesymmetrize   |
+            denominators      |
+            dis               |
+            discard           |
+            disorder          |
+            do                |
+            dropcoefficient   |
+            dropsymbols       |
+            else              |
+            elseif            |
+            emptyspectator    |
+            endargument       |
+            enddo             |
+            endif             |
+            endinexpression   |
+            endinside         |
+            endrepeat         |
+            endterm           |
+            endwhile          |
+            exit              |
+            extrasymbols      |
+            factarg           |
+            factdollar        |
+            frompolynomial    |
+            goto              |
+            id                |
+            identify          |
+            iden              |
+            ident             |
+            idn               |
+            idnew             |
+            ido               |
+            idold             |
+            if                |
+            ifmatch           |
+            ifnomatch         |
+            ifnotmatch        |
+            inexpression      |
+            inside            |
+            label             |
+            makeinteger       |
+            many              |
+            merge             |
+            mul               |
+            multi             |
+            multibracket      |
+            multiply          |
+            normalize         |
+            nwrite            |
+            once              |
+            only              |
+            putinside         |
+            ratio             |
+            rcyclesymmetrize  |
+            redefine          |
+            removespectator   |
+            renumber          |
+            repeat            |
+            replaceloop       |
+            select            |
+            setexitflag       |
+            shuffle           |
+            sort              |
+            splitarg          |
+            splitfirstarg     |
+            splitlastarg      |
+            stuffle           |
+            sum               |
+            symm              |
+            symmetrize        |
+            term              |
+            testuse           |
+            topolynomial      |
+            tospectator       |
+            totensor          |
+            tovector          |
+            trace4            |
+            tracen            |
+            transform         |
+            tryreplace        |
+            unfactorize       |
+            while             |
+            write
+          )\%]
+        </match>
+      </context>
+
+
+      <!--
+            Some statements can be abbreviated to just one or two characters.
+            Since here it is impossible to distinguish such abbreviations from
+            user-defined variables, we adopt the following rule: If the corresponding
+            word is no more than 3 spaces away from the beginning of the line, we
+            interpret it as an abbreviated  statement. Otherwise it will
+            be treated as a user-defined variable.
+
+            The current shortcuts are for antisymmetrize, multiply, cyclesymmetrize,
+            goto, nwrite, rcyclesymmetrize, redefine and write.
+      -->
+      <context id="statement-executable-short" style-ref="st-statement-executable" class="no-spell-check">
+        <match extended="true" case-sensitive="false">
+          (^\s{0,3})\%[(
+            an  |
+            cy  |
+            go  |
+            la  |
+            mu  |
+            nw  |
+            rc  |
+            r   |
+            w
+          )\%]
+        </match>
+      </context>
+
+
+      <!--
+            Options for some of the statements: cf. Chapter 8 of the FORM manual.
+      -->
+      <context id="statement-option" style-ref="st-statement-option" class="no-spell-check">
+        <match extended="true" case-sensitive="false">
+          \%[(
+          O0                  |
+          O1                  |
+          O2                  |
+          O3                  |
+          O4                  |
+          addargs             |
+          all                 |
+          alln                |
+          allnames            |
+          allnormalize        |
+          allwarnings         |
+          alsodollars         |
+          alsofunctions       |
+          alsopowers          |
+          antisymm            |
+          antisymmetric       |
+          arguments           |
+          array               |
+          brackets            |
+          check               |
+          checkpoint          |
+          codes               |
+          coefficientsonly    |
+          compress            |
+          contract            |
+          count               |
+          cycle               |
+          cyclesymm           |
+          cyclesymmetric      |
+          decode              |
+          dedup               |
+          disorder            |
+          doublefortran       |
+          dropargs            |
+          encode              |
+          expression          |
+          fewerstatistics     |
+          fewerstats          |
+          finalstats          |
+          findloop            |
+          flag                |
+          float               |
+          fortran             |
+          fortran90           |
+          gzip                |
+          highfirst           |
+          id                  |
+          ifmatch             |
+          ifnomatch           |
+          include             |
+          indentspace         |
+          innertest           |
+          inparallel          |
+          insidefirst         |
+          inversetable        |
+          islyndon            |
+          left                |
+          local               |
+          loopsize            |
+          lowfirst            |
+          many                |
+          maple               |
+          match               |
+          mathematica         |
+          maximum             |
+          memdebugflag        |
+          minimum             |
+          mulargs             |
+          multi               |
+          multipleof          |
+          names               |
+          nocontract          |
+          nodollars           |
+          nofunctions         |
+          noinversetable      |
+          nopowers            |
+          normal              |
+          nospaces            |
+          nospacesinnumbers   |
+          nosymmetrize        |
+          notinparallel       |
+          notrick             |
+          occurs              |
+          off                 |
+          oldfactarg          |
+          oldgcd              |
+          oldparallelstats    |
+          on                  |
+          once                |
+          onlyfunctions       |
+          onefill             |
+          only                |
+          outfun              |
+          parallel            |
+          permute             |
+          pfortran            |
+          plusmin             |
+          polyfun             |
+          polyratfun          |
+          positive            |
+          powerfirst          |
+          printpowersof       |
+          processbucketsize   |
+          processstats        |
+          propercount         |
+          properorder         |
+          quadfortran         |
+          quadruplefortran    |
+          rational            |
+          rcyclesymm          |
+          rcyclesymmetric     |
+          rcycl               |
+          rcyclic             |
+          redefine            |
+          reduce              |
+          relax               |
+          replace             |
+          reverse             |
+          reversecyclic       |
+          reversecycl         |
+          right               |
+          run                 |
+          runafter            |
+          runbefore           |
+          select              |
+          selectargs          |
+          setup               |
+          shortstatistics     |
+          shortstats          |
+          spaces              |
+          sparse              |
+          statistics          |
+          stats               |
+          strict              |
+          sum                 |
+          symm                |
+          symmetric           |
+          symmetrize          |
+          threadloadbalancing |
+          threads             |
+          threadsortfilesynch |
+          threadstats         |
+          tointegralnotation  |
+          tokens              |
+          tolyndon            |
+          tonumber            |
+          tosumnotation       |
+          totalsize           |
+          trick               |
+          underscore          |
+          vector              |
+          vortran             |
+          warnings            |
+          wtimestats          |
+          zerofill
+        )\%]
+        </match>
+      </context>
+
+
+      <!--
+            This is an ugly hack for the C option of the format statement. Since
+             c or C could also be a variable name, we must ensure that there is a
+             word format in front of this option. Unfortunately, this positive
+             look-behind is quite expensive, so that we cannot allow an arbitrary
+             number of spaces or other symbols between format and C.
+      -->
+      <context id="statement-option-special" style-ref="st-statement-option" class="no-spell-check">
+        <match extended="true" case-sensitive="false">
+          (
+            ((?&lt;=(\b(format)\b\s))\b(c)\b) |
+            ((?&lt;=(\b(format)\b\s{2}))\b(c)\b) |
+            ((?&lt;=(\b(format)\b\s{3}))\b(c)\b) |
+            ((?&lt;=(\b(format)\b\s{4}))\b(c)\b)
+          )
+        </match>
+      </context>
+
+      <context id="form">
+        <include>
+          <context ref="separator-comment"/>
+          <context ref="fold-comment"/>
+          <context ref="line-comment"/>
+          <context ref="boolean"/>
+          <context ref="operator"/>
+          <context ref="numeric" />
+          <context ref="preprocessor-variable"/>
+          <context ref="string"/>
+          <context ref="set"/>
+          <context ref="preprocessor-setup-parameter"/>
+          <context ref="preprocessor-statement"/>
+          <context ref="dollar-variable" />
+          <context ref="module"/>
+          <context ref="function-tensor"/>
+          <context ref="function-reserved"/>
+          <context ref="function-regular"/>
+          <context ref="statement-declaration"/>
+          <context ref="statement-declaration-special"/>
+          <context ref="statement-declaration-short"/>
+          <context ref="statement-specification"/>
+          <context ref="statement-control"/>
+          <context ref="statement-control-short"/>
+          <context ref="statement-executable"/>
+          <context ref="statement-executable-short"/>
+          <context ref="statement-option"/>
+          <context ref="statement-option-special"/>
+        </include>
+      </context>
+
+  </definitions>
+</language>

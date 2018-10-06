@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+  Author: Vladyslav Shtabovenko
+  
+  Copyright (C) 2018 Vladyslav Shtabovenko <dev.vsht@posteo.de>
+  Copyright (C) 2013 Paul Thompson <redoubts(at)gmail(dot)com>
+  Copyright (C) 2011 Craig Russell <craig@craig-russell.co.uk>
+  
+  This file contains parts of the gedit solarized-dark theme by Craig Russel as 
+  well as color elements from the Geany Spyder dark theme by Paul Thompson.
+  
+  C.f. https://github.com/codebrainz/geany-themes/blob/master/colorschemes/spyder-dark.conf
+  
+  and 
+  
+  https://github.com/craig552uk/solarized-gedit/blob/master/solarized-dark.xml
+  
+  This program is free software; you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation; either version 2 of the License, or
+  (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with this program; if not, write to the Free Software
+  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+  MA 02110-1301, USA.
+
+-->
+<style-scheme id="vlad-dark" _name="Vlad Dark" version="1.0">
+  <author>Vladyslav Shtabovenko</author>
+  <_description>A Gedit adaptation (with some tweaks) of the Spyder Dark theme for Geany editor theme by Paul Thompson.</_description>
+
+  <!-- Solarized Palette -->
+
+  <!--
+    Main background color (very dark blue)
+  -->
+  <color name="base03"  value="#131926"/>
+
+  <color name="base02"  value="#073642"/>
+
+
+  <color name="base01"  value="#7f7f7f"/>
+
+    <!--
+    Comment color (gray)
+  -->
+  <color name="base00"  value="#657B83"/>
+
+
+  <color name="base0"   value="#839496"/>
+
+  <!--
+    Main text color (white)
+  -->
+  <color name="base1"   value="#CACACA"/>
+
+
+  <color name="base2"   value="#EEE8D5"/>
+  <color name="base3"   value="#FDF6E3"/>
+  <color name="yellow"  value="#B58900"/>
+  <color name="orange"  value="#CB4B16"/>
+  <color name="red"     value="#DC322F"/>
+  <color name="magenta" value="#D33682"/>
+  <color name="violet"  value="#6C71C4"/>
+  <color name="blue"    value="#268BD2"/>
+  <color name="cyan"    value="#2AA198"/>
+
+
+  <color name="myorange"   value="#FFA500"/>
+  <color name="mygreen"   value="#11a642"/>
+  <color name="myblue"   value="#558EFF"/>
+  <color name="myred"   value="#c80000"/>
+
+  <color name="myred2"   value="#a52a2a"/>
+
+
+<color name="myorange2"   value="#914F06"/>
+
+
+  <color name="pink"   value="#ad7fa8"/>
+  <color name="pink2"   value="#A80372"/>
+
+<color name="mylightblue"   value="#19D3FF"/>
+
+
+
+  <color name="base03-02-blend" value="#032F3B"/>
+
+
+  <!-- Global Settings -->
+  <style name="text"                        foreground="base1" background="base03"/>
+  <style name="selection"                   foreground="base03" background="base00"/>
+
+  <style name="cursor"                      foreground="base1"/>
+  <style name="secondary-cursor"            foreground="base00"/>
+  <style name="current-line"                background="base02"/>
+  <style name="line-numbers"                foreground="base01" background="base02"/>
+  <style name="background-pattern"          background="base03-02-blend"/>
+
+  <!-- Bracket Matching -->
+  <style name="bracket-match"               foreground="base03" background="base01"/>
+  <style name="bracket-mismatch"            foreground="red" background="base01"/>
+
+  <!-- Right Margin -->
+  <style name="right-margin"                foreground="base2" background="base1"/>
+
+  <!-- Search Matching -->
+  <style name="search-match"                foreground="base03" background="yellow"/>
+
+  <!-- Comments -->
+  <style name="def:comment"                 foreground="base01"/>
+  <style name="def:shebang"                 foreground="base01" bold="true"/>
+  <style name="def:doc-comment-element"     italic="true"/>
+
+  <!-- Constants -->
+  <style name="def:constant"                foreground="cyan"/>
+  <style name="def:special-char"            foreground="myorange"/>
+
+  <!-- Identifiers -->
+  <style name="def:identifier"              foreground="blue"/>
+
+  <!-- Statements -->
+  <style name="def:statement"               foreground="myblue"/>
+  <style name="def:function"               foreground="mylightblue"/>
+  <style name="form:statement-option"        foreground="myblue" underline="single"/>
+
+  <!-- Types -->
+  <style name="def:type"                    foreground="orange"/>
+
+  <!-- Operators -->
+  <style name="def:operator"                foreground="myorange"/>
+
+  <!-- Others -->
+  <style name="def:preprocessor"            foreground="pink"/>
+
+  <style name="def:string"                  foreground="mygreen"/>
+
+  <style name="def:decimal"                  foreground="myred"/>
+
+
+  <style name="form:preprocessor-variable"                  foreground="mygreen" bold="true"/>
+  <style name="form:module"                  foreground="base03" background="myorange2" bold="true" />
+
+  <style name="def:error"                   foreground="red" bold="true"/>
+  <style name="def:note"                    foreground="base03" background="pink" bold="true"/>
+  <style name="form:fold"                    foreground="base03" background="mygreen" bold="true"/>
+
+
+  <style name="def:underlined"              italic="true" underline="single"/>
+
+  <!-- Heading styles, uncomment to enable -->
+  <!--
+  <style name="def:heading0"                scale="5.0"/>
+  <style name="def:heading1"                scale="2.5"/>
+  <style name="def:heading2"                scale="2.0"/>
+  <style name="def:heading3"                scale="1.7"/>
+  <style name="def:heading4"                scale="1.5"/>
+  <style name="def:heading5"                scale="1.3"/>
+  <style name="def:heading6"                scale="1.2"/>
+  -->
+</style-scheme>
