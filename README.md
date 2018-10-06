@@ -92,6 +92,20 @@ Syntax highlighting with `formext.lang` and `vlad-dark.xml`
 
 ![Alt text](example2.jpg?raw=true)
 
+## Running FORM scripts from gedit
+
+To be able to run your FORM scripts directly from gedit, you need to install and activate the `External Tools` plugin. Then go 
+to `Manage External Tools` and create a new tool `Run FORM` with the following script
+
+```
+#!/bin/sh
+gnome-terminal -- /bin/bash -c 'cd $GEDIT_CURRENT_DOCUMENT_DIR; ~/bin/form -q $GEDIT_CURRENT_DOCUMENT_NAME; echo Hit Enter to close; read'
+```
+
+You can also assign it a handy shortcut like Super+F2 to make the execution more convenient.
+
+![Alt text](exttools.png?raw=true)
+
 ## Useful links
 
 For more information regarding FORM see
