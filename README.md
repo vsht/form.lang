@@ -11,13 +11,14 @@
 The instructions on registering FORM files were adapted from <https://help.gnome.org/admin/system-admin-guide/stable/mime-types-custom-user.html.en>
 
 * Download the tarball or clone the repository.
-* Create a directory for custom language files in your home directory
+* Create the directories for custom language files in your home directory
 
 ```
 mkdir -p ~/.local/share/gtksourceview-3.0/language-specs
+mkdir -p ~/.local/share/gtksourceview-4/language-specs
 ```
 
-* Copy `form.lang` to `~/.local/share/gtksourceview-3.0/language-specs`
+* Copy `form.lang` to `~/.local/share/gtksourceview-3.0/language-specs` and `~/.local/share/gtksourceview-4/language-specs`
 
 * Create a new mimetype for FORM files in `~/.local/share/mime/packages/text-x-form.xml` with the following content
 
